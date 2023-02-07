@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap");
 * {
   padding: 0;
   margin: 0;
@@ -56,22 +57,27 @@ h1, h2, h3, h4, h5, h6 {
   font-size: inherit;
   font-weight: 400; }
 
-body {
-  background: #F5CAA2; }
-
 .wrapper {
   height: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  width: 100%;
+  position: relative;
+  padding: 50px;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 50px; }
+
+.wrapper.main {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
-          justify-content: center;
-  width: 100%;
-  position: relative; }
+          justify-content: center; }
 
 .storages {
   display: -webkit-box;
@@ -121,3 +127,30 @@ body {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none; }
+
+.table__info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  padding: 0px;
+  gap: 16px;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: bold; }
+
+.table__storage {
+  font-size: 40px; }
+
+.table__name {
+  font-size: 32px; }
+
+.table__header {
+  background: #EAAD75;
+  font-size: 12px;
+  color: #000000; }
