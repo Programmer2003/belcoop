@@ -18,14 +18,27 @@
     <?php
     session_start();
     include "db.php";
-    $id = $_GET['id'];
-    $q = "SELECT `product`.*,`category`.`id` as `category` FROM `product` LEFT JOIN `category` ON `product`.`category` = `category`.`id`  where `product`.`id` = '{$id}'";
 
+    if (!isset($_GET['id']) || is_null($_GET['id'])) {
+        http_response_code(404);
+        include('404.php'); // provide your own HTML for the error page
+        die();
+    }
+    $id = $_GET['id'];
+    $count = "SELECT id  FROM `product` where `product`.`id` = '{$id}'";
+    if (mysqli_query($link, $count)->num_rows == 0) {
+        http_response_code(404);
+        include('404.php'); // provide your own HTML for the error page
+        die();
+    }
+
+    $q = "SELECT `product`.*,`category`.`id` as `category` FROM `product` LEFT JOIN `category` ON `product`.`category` = `category`.`id`  where `product`.`id` = '{$id}'";
+    
     $obj = mysqli_query($link, $q)->fetch_assoc();
     ?>
     <div class="container">
         <form class="needs-validation" id="deleteForm" method="post" action="deletePost.php">
-            <input name="id" type="hidden" value="<?php echo $_GET["id"]; ?>">
+            <input name="id" id="recordId" type="hidden" value="<?php echo $_GET["id"]; ?>">
             <div class="border p-3 mt-4">
                 <div class="row pb-2">
                     <h2 class="text-primary">Удаление товара</h2>
@@ -61,12 +74,6 @@
             </div>
         </form>
     </div>
-    <?php
-    if (isset($_SESSION['deletedObj'])) {
-        echo var_dump($_SESSION['deletedObj']);
-        unset($_SESSION['deletedObj']);
-    }
-    ?>
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js" integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -104,6 +111,8 @@
                             toastr.error('Ошибка во время выполнения');
                         } else {
                             toastr.success('Запись восстановлена');
+                            history.pushState("delete","delete",`delete.php?id=${data}`)
+                            $('#recordId').val(data);
                             $('#button').data("deleted",0);
                             $('#button').text("Удалить");
                         }
