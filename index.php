@@ -29,7 +29,7 @@
 			<div class="collapse navbar-collapse" id="navbarColor02">
 				<ul class="navbar-nav me-auto">
 					<li class="nav-item">
-						<a class="nav-link" href="#">Главная
+						<a class="nav-link" href="#" onclick="showChoice()">Выбрать таблицу
 							<span class="visually-hidden">(current)</span>
 						</a>
 					</li>
@@ -40,37 +40,41 @@
 
 	<div class="wrapper main" id="choice">
 		<div class="storages">
-			<div class="storage" data-group="1">
-				<div class="storage__img">
-					<img src="img/1.png" alt="">
-				</div>
-				<div class="storage__text">
-					Продовольстенные <br> товары
-				</div>
-			</div>
-			<div class="storage" data-group="2">
-				<div class="storage__img">
-					<img src="img/2.png" alt="">
-				</div>
-				<div class="storage__text">
-					Промышленные <br> товары
-				</div>
-			</div>
+			<?php
+			$query = "SELECT `storage`.`id`,`storage`.`type`,`storage`.`img` FROM `storage`";
+			if ($result = mysqli_query($link, $query)) {
+				while ($row = mysqli_fetch_assoc($result)) {
+					echo "<div class='storage' data-group='{$row['id']}'>
+						<div class='storage__img'>
+							<img src='img/{$row['img']}' alt='{$row['type']}'>
+						</div>
+						<div class='storage__text'>
+							{$row['type']}
+						</div>
+					</div>";
+				}
+			}
+			?>
 		</div>
 	</div>
 
 	<div class="wrapper container-fluid" id="show" style="display: none;">
-		<div class="table__info">
-			<div class="table__storage">
-				Склад №1 “Первый”
+		<div class="table__info" id="tableInfo">
+			<div class="table__storage" id="storageName">
+				Склад №1
 			</div>
-			<div class="table__name">
-				Промышленные товары
+			<div class="table__name" id="storageType">
+				Товары
+			</div>
+			<div class="text-end">
+				<a href="create.php" class="btn btn-primary">
+					<i class="bi bi-plus-circle"></i> &nbsp; Добавить товар
+				</a>
 			</div>
 		</div>
 		<div class="table-all">
 			<table class="table table-bordered table-striped" style="width:100%" id="table">
-				
+
 			</table>
 		</div>
 	</div>
@@ -87,6 +91,7 @@
 			for (let item of $('.storage')) {
 				$(item).on('click', function () {
 					let id = $(this).data("group");
+					tableInfo(id);
 					showTable(id);
 					$('#choice').slideToggle(500, 'linear');
 					$('#show').slideToggle(750);
@@ -98,10 +103,34 @@
 			$.ajax({
 				type: 'POST',
 				url: 'getTable.php',
-				data: { id: id}
+				data: {
+					id: id
+				}
 			}).then(function (res) {
 				$('#table').html(res);
-			})
+			});
+		}
+
+		function tableInfo(id) {
+			$.ajax({
+				type: 'POST',
+				url: 'getTableInfo.php',
+				data: {
+					id: id
+				}
+			}).then(function (res) {
+				let data = JSON.parse(res);
+				$('#storageName').html(data['name']);
+				$('#storageType').html(data['type']);
+			});
+		}
+
+		function showChoice() {
+			console.log(1);
+			if ($('#choice').is(':hidden')) {
+				$('#choice').slideToggle(500, 'linear');
+				$('#show').hide(750);
+			}
 		}
 	</script>
 </body>

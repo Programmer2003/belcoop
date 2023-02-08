@@ -52,7 +52,7 @@
                         ?>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-danger" style="width:150px">
+                <button id="button" data-deleted="0" type="submit" class="btn btn-danger" style="width:150px">
                     Удалить 
                 </button>
                 <a href="index.php" class="btn btn-secondary" style="width:150px">
@@ -76,20 +76,40 @@
         $(function() {
             $('#deleteForm').on('submit', function(e) {
                 e.preventDefault();
-
-                $.ajax({
-                    type: 'POST',
-                    url: 'deletePost.php',
-                    data: $(this).serialize()
-                }).then(function(data) {
-                    console.log(data);
-                    if (data.error) {
-                        console.log('error during execution');
-                        toastr.error('Ошибка во время выполнения');
-                    } else {
-                        toastr.success('Запись успешно обновлена');
-                    }
-                })
+                if($('#button').data("deleted")===0){
+                    $.ajax({
+                        type: 'POST',
+                        url: 'deletePost.php',
+                        data: $(this).serialize()
+                    }).then(function(data) {
+                        console.log(data);
+                        if (data.error) {
+                            console.log('error during execution');
+                            toastr.error('Ошибка во время выполнения');
+                        } else {
+                            toastr.success('Запись удалена');
+                            $('#button').data("deleted",1);
+                            $('#button').text("Восстановить");
+                        }
+                    })
+                }
+                else{
+                    $.ajax({
+                        type: 'POST',
+                        url: 'recoverPost.php',
+                    }).then(function(data) {
+                        console.log(data);
+                        if (data.error) {
+                            console.log('error during execution');
+                            toastr.error('Ошибка во время выполнения');
+                        } else {
+                            toastr.success('Запись восстановлена');
+                            $('#button').data("deleted",0);
+                            $('#button').text("Удалить");
+                        }
+                    })
+                }
+                
             })
         })
     </script>

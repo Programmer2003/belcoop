@@ -25,10 +25,6 @@
     else{
         $group = 1;
     }
-    $id = $_GET['id'];
-    $q = "SELECT `product`.*,`category`.`id` as `category` FROM `product` LEFT JOIN `category` ON `product`.`category` = `category`.`id`  where `product`.`id` = '{$id}'";
-
-    $obj = mysqli_query($link, $q)->fetch_assoc();
     ?>
     <nav class="con navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
@@ -50,8 +46,7 @@
 	</nav>
 
     <div class="container">
-        <form class="needs-validation" id="editForm" method="post" action="editPost.php" novalidate>
-            <input name="id" type="hidden" value="<?php echo $_GET["id"]; ?>">
+        <form class="needs-validation" id="editForm" method="post" action="insertPost.php" novalidate>
             <div class="border p-3 mt-4">
                 <div class="row pb-2">
                     <h2 class="text-primary">Редактирование товара</h2>
@@ -59,16 +54,14 @@
                 </div>
                 <div class="mb-3">
                     <label for="name">Название</label>
-                    <input type="text" id="name" name="name" class="form-control" 
-                    value="<?php echo $obj["name"]; ?>" required/>
+                    <input type="text" id="name" name="name" class="form-control" required/>
                     <div class="invalid-feedback">
                         Введите название.
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="price">Цена</label>
-                    <input type="number" min="0.1" step="any" id="price" name="price" class="form-control"
-                        value="<?php echo $obj["price"]; ?>" required/>
+                    <input type="number" min="0.1" step="any" id="price" name="price" class="form-control" required/>
                     <div class="invalid-feedback">
                         Цена должна быть от 10 копеек.
                     </div>
@@ -80,7 +73,7 @@
                             $query = "SELECT id,name FROM category WHERE `category`.`storage`='{$group}'";
                             if ($result = mysqli_query($link, $query)) {
                                 while ($row = mysqli_fetch_assoc($result)) {
-                                    echo "<option " . ($row['id']==$obj['category']?'selected':'')  . " value=" . $row["id"] . ">" . $row["name"] . "</option>";
+                                    echo "<option selected value=" . $row["id"] . ">" . $row["name"] . "</option>";
                                 }
                             }
                         ?>
@@ -120,7 +113,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: 'editPost.php',
+                    url: 'insertPost.php',
                     data: $(this).serialize()
                 }).then(function (data) {
                     console.log(data);
