@@ -38,9 +38,9 @@
 		</div>
 	</nav>
 
-	<!--div class="wrapper main">
+	<div class="wrapper main" id="choice">
 		<div class="storages">
-			<div class="storage">
+			<div class="storage" data-group="1">
 				<div class="storage__img">
 					<img src="img/1.png" alt="">
 				</div>
@@ -48,7 +48,7 @@
 					Продовольстенные <br> товары
 				</div>
 			</div>
-			<div class="storage">
+			<div class="storage" data-group="2">
 				<div class="storage__img">
 					<img src="img/2.png" alt="">
 				</div>
@@ -57,9 +57,9 @@
 				</div>
 			</div>
 		</div>
-	</div-->
+	</div>
 
-	<div class="wrapper container-fluid">
+	<div class="wrapper container-fluid" id="show" style="display: none;">
 		<div class="table__info">
 			<div class="table__storage">
 				Склад №1 “Первый”
@@ -69,60 +69,8 @@
 			</div>
 		</div>
 		<div class="table-all">
-			<table class="table table-bordered table-striped" style="width:100%">
-				<thead>
-					<tr>
-						<th>
-							Название
-						</th>
-						<th>
-							Цена
-						</th>
-						<th>
-							Группа
-						</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php
-					$query = 'SELECT `product`.`id`,`product`.`name`,`product`.`price`, `category`.`name` as `cateogry` FROM `product` LEFT JOIN `category` ON `product`.`category` = `category`.`id`';
-					if ($result = mysqli_query($link, $query)) {
-						while ($row = mysqli_fetch_assoc($result)) {
-							echo "<tr>";
-							echo 	"<td style='display: none'>" . $row["id"] . "</td>";
-							echo	"<td scope='row'>" . $row["name"] . "</th>";
-							echo	"<td>" . $row["price"] . "</td>";
-							echo	"<td>" . $row["cateogry"] . "</td>";
-							echo "<td>
-							<div class='w-75 btn-group' role='group'>
-								<a href='edit.php?id="  . $row["id"] . "' class='btn btn-primary mx-2'><i class='bi bi-pencil-square'></i> Edit</a>
-								<a href='delete.php?id="  . $row["id"] . "' class='btn btn-danger mx-2'><i class='bi bi-trash-fill'></i> Delete</a>
-							</div>
-							</td>";
-							echo "</tr>";
-						}
-					}
-					mysqli_free_result($result);
-					?>
-					<tr>
-						<td width="40%">
-							Йогурт 3%
-						</td>
-						<td width="20%">
-							12.45
-						</td>
-						<td width="25%">
-							Молочные
-						</td>
-						<td>
-							<div class="w-75 btn-group" role="group">
-								<a class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Edit</a>
-								<a class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Delete</a>
-							</div>
-						</td>
-					</tr>
-				</tbody>
+			<table class="table table-bordered table-striped" style="width:100%" id="table">
+				
 			</table>
 		</div>
 	</div>
@@ -134,6 +82,28 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
 		crossorigin="anonymous"></script>
+	<script>
+		$(function () {
+			for (let item of $('.storage')) {
+				$(item).on('click', function () {
+					let id = $(this).data("group");
+					showTable(id);
+					$('#choice').slideToggle(500, 'linear');
+					$('#show').slideToggle(750);
+				})
+			}
+		})
+
+		function showTable(id) {
+			$.ajax({
+				type: 'POST',
+				url: 'getTable.php',
+				data: { id: id}
+			}).then(function (res) {
+				$('#table').html(res);
+			})
+		}
+	</script>
 </body>
 
 </html>

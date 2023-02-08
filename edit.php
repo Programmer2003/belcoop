@@ -18,13 +18,20 @@
 <body>
     <?php
     include "db.php";
+    session_start();
+    if(isset($_SESSION['group'])){
+        $group = $_SESSION['group'];
+    }
+    else{
+        $group = 1;
+    }
     $id = $_GET['id'];
     $q = "SELECT `product`.*,`category`.`id` as `category` FROM `product` LEFT JOIN `category` ON `product`.`category` = `category`.`id`  where `product`.`id` = '{$id}'";
 
     $obj = mysqli_query($link, $q)->fetch_assoc();
     ?>
     <div class="container">
-        <form method="post" action="editPost.php">
+        <form class="needs-validation" id="editForm" method="post" action="editPost.php" novalidate>
             <input name="id" type="hidden" value="<?php echo $_GET["id"]; ?>">
             <div class="border p-3 mt-4">
                 <div class="row pb-2">
@@ -33,17 +40,25 @@
                 </div>
                 <div class="mb-3">
                     <label for="name">Название</label>
-                    <input id="name" name="name" class="form-control" value="<?php echo $obj["name"]; ?>" />
+                    <input type="text" id="name" name="name" class="form-control" 
+                    value="<?php echo $obj["name"]; ?>" required/>
+                    <div class="invalid-feedback">
+                        Введите название.
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="price">Цена</label>
-                    <input id="price" name="price" class="form-control" value="<?php echo $obj["price"]; ?>" />
+                    <input type="number" min="0.1" step="any" id="price" name="price" class="form-control"
+                        value="<?php echo $obj["price"]; ?>" required/>
+                    <div class="invalid-feedback">
+                        Цена должна быть от 10 копеек.
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="exampleSelect1" class="form-label">Группа</label>
                     <select class="form-select" name="category">
                         <?php
-                            $query = "SELECT id,name FROM category";
+                            $query = "SELECT id,name FROM category WHERE `category`.`storage`='{$group}'";
                             if ($result = mysqli_query($link, $query)) {
                                 while ($row = mysqli_fetch_assoc($result)) {
                                     echo "<option " . ($row['id']==$obj['category']?'selected':'')  . " value=" . $row["id"] . ">" . $row["name"] . "</option>";
@@ -62,7 +77,6 @@
         </form>
     </div>
 
-
     <script src="https://code.jquery.com/jquery-3.6.0.js"
         integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"
@@ -70,25 +84,59 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
-        
-    <?php 
-    session_start();
-    if ( isset($_SESSION['success'])) { ?>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-        <script>
-            toastr.success('Запись обновлена');
-        </script>
-    <?php 
-    unset($_SESSION['success']);
-    } 
-    if ( isset($_SESSION['error'])) { ?>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-        <script>
-            toastr.error('Ошибка во время обновления');
-        </script>
-    <?php 
-    unset($_SESSION['error']);
-    }?>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+
+        $(function () {
+            $('#editForm').on('submit', function (e) {
+                e.preventDefault();
+
+                if (!this.checkValidity()) {
+                    e.stopPropagation();
+                    return;
+                }
+
+                this.classList.add('was-validated');
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'editPost.php',
+                    data: $(this).serialize()
+                }).then(function (res) {
+                    let data = JSON.parse(res);
+                    console.log(data);
+                    if (data.error) {
+                        console.log('error during execution');
+                        toastr.error('Ошибка во время выполнения');
+                    }
+                    else {
+                        toastr.success('Запись успешно обновлена');
+                    }
+                })
+            })
+        })
+    </script>
+
+    <script>
+            (function () {
+                'use strict'
+
+                var forms = document.querySelectorAll('.needs-validation')
+
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
+    </script>
 </body>
 
 </html>
