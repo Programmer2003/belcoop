@@ -49,7 +49,7 @@
         <form class="needs-validation" id="editForm" method="post" action="insertPost.php" novalidate>
             <div class="border p-3 mt-4">
                 <div class="row pb-2">
-                    <h2 class="text-primary">Редактирование товара</h2>
+                    <h2 class="text-primary">Добавление товара</h2>
                     <hr />
                 </div>
                 <div class="mb-3">

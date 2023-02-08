@@ -19,8 +19,8 @@
 	include "db.php";
 	?>
 
-	<nav class="con navbar navbar-expand-lg navbar-dark bg-dark">
-		<div class="container-fluid">
+	<nav class="con navbar navbar-expand-lg navbar-dark bg-dark position-absolute w-100">
+		<div class="container-fluid ">
 			<a class="navbar-brand" href="#">Белкоопсоюз</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02"
 				aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
@@ -126,7 +126,6 @@
 		}
 
 		function showChoice() {
-			console.log(1);
 			if ($('#choice').is(':hidden')) {
 				$('#choice').slideToggle(500, 'linear');
 				$('#show').hide(750);
