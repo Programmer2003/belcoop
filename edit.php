@@ -2,17 +2,18 @@
 <html lang="ru">
 
 <head>
-    <title>try</title>
+	<title>try</title>
 
-    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/css.css">
-    <link rel="stylesheet" href="css/theme.css">
+	<link rel="stylesheet" href="lib/bootstap/dist/css/bootstap.min.css" >
+	<link rel="stylesheet" href="node_modules/bootstrap-icons/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="css/css.css">
+	<link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="lib/toastr/dist/css/toastr.min.css" >
 </head>
+
 
 <body>
     <?php
@@ -25,18 +26,22 @@
     }
     if (!isset($_GET['id']) || is_null($_GET['id'])) {
         http_response_code(404);
-        include('404.php'); // provide your own HTML for the error page
+        include('404.php');
         die();
     }
     $id = $_GET['id'];
-    $count = "SELECT id  FROM `product` where `product`.`id` = '{$id}'";
+    $count = "SELECT `product`.`id` FROM `product` 
+              WHERE `product`.`id` = '{$id}'";
     if (mysqli_query($link, $count)->num_rows == 0) {
         http_response_code(404);
-        include('404.php'); // provide your own HTML for the error page
+        include('404.php');
         die();
     }
 
-    $q = "SELECT `product`.*,`category`.`id` as `category` FROM `product` LEFT JOIN `category` ON `product`.`category` = `category`.`id`  where `product`.`id` = '{$id}'";
+    $q = "SELECT `product`.*,`category`.`id` AS `category` 
+          FROM `product` LEFT JOIN `category` 
+          ON `product`.`category` = `category`.`id` 
+          WHERE `product`.`id` = '{$id}'";
 
     $obj = mysqli_query($link, $q)->fetch_assoc();
     ?>
@@ -84,7 +89,8 @@
                     <label for="exampleSelect1" class="form-label">Группа</label>
                     <select class="form-select" name="category">
                         <?php
-                        $query = "SELECT id,name FROM category WHERE `category`.`storage`='{$group}'";
+                        $query = "SELECT `category`.`id`,`category`.`name` FROM `category`
+                                  WHERE `category`.`storage`='{$group}'";
                         if ($result = mysqli_query($link, $query)) {
                             while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<option " . ($row['id'] == $obj['category'] ? 'selected' : '')  . " value=" . $row["id"] . ">" . $row["name"] . "</option>";
@@ -103,13 +109,15 @@
         </form>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js" integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="lib/jquery/dist/jquery.js"></script>
+	<script src="lib/jquery/dist/jquery-ui.js"></script>
+	<script src="lib/bootstap/dist/js/bootstap.bundle.min.js"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="lib/toastr/dist/js/toastr.min.js"></script>
+
     <script>
         $(function() {
+            //form validation and product update
             $('#editForm').on('submit', function(e) {
                 e.preventDefault();
 
@@ -137,25 +145,7 @@
         })
     </script>
 
-    <script>
-        (function() {
-            'use strict'
-
-            var forms = document.querySelectorAll('.needs-validation')
-
-            Array.prototype.slice.call(forms)
-                .forEach(function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault()
-                            event.stopPropagation()
-                        }
-
-                        form.classList.add('was-validated')
-                    }, false)
-                })
-        })()
-    </script>
+    <script src="js/form-validation.js"></script>
 </body>
 
 </html>
