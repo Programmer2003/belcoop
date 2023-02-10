@@ -129,18 +129,20 @@
                 this.classList.add('was-validated');
 
                 $.ajax({
-                    type: 'POST',
-                    url: 'editPost.php',
-                    data: $(this).serialize()
-                }).then(function(data) {
-                    console.log(data);
-                    if (data.error) {
+                    type: "POST",
+                    url: "editPost.php",
+                    data: $(this).serialize(),
+                    dataType: "json",
+                    success: function(res) {
+                        console.log(res['code']);
+                        toastr.success('Запись успешно обновлена');
+                    },
+                    error: function(data){
                         console.log('error during execution');
                         toastr.error('Ошибка во время выполнения');
-                    } else {
-                        toastr.success('Запись успешно обновлена');
                     }
-                })
+                });
+            
             })
         })
     </script>

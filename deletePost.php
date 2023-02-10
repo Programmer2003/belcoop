@@ -9,7 +9,8 @@ if (isset($_POST['id'])) {
         session_start();
         $_SESSION['deletedObj'] = $result->fetch_assoc();
         if (mysqli_query($link, $query) === TRUE) {
-            echo "Record deleted successfully";
+            $arr = array('code' => 200);
+            echo json_encode($arr);
         } else {
             throw new Exception("Error: <br>" . $link->error);
         }

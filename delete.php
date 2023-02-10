@@ -98,36 +98,40 @@
                     $.ajax({
                         type: 'POST',
                         url: 'deletePost.php',
-                        data: $(this).serialize()
-                    }).then(function(data) {
-                        console.log(data);
-                        if (data.error) {
-                            console.log('error during execution');
-                            toastr.error('Ошибка во время выполнения');
-                        } else {
+                        data: $(this).serialize(),
+                        dataType: "json",
+                        success: function(res) {
+                            console.log(res['code']);
                             toastr.success('Запись удалена');
                             $('#button').data("deleted",1);
                             $('#button').text("Восстановить");
+                        },
+                        error: function(data){
+                            console.log('error during execution');
+                            toastr.error('Ошибка во время выполнения');
                         }
-                    })
+                    });
                 }
                 else{
                     $.ajax({
                         type: 'POST',
                         url: 'recoverPost.php',
-                    }).then(function(data) {
-                        console.log(data);
-                        if (data.error) {
-                            console.log('error during execution');
-                            toastr.error('Ошибка во время выполнения');
-                        } else {
-                            toastr.success('Запись восстановлена');
-                            history.pushState("delete","delete",`delete.php?id=${data}`)
-                            $('#recordId').val(data);
+                        data: {},
+                        dataType: "json",
+                        success: function(res) {
+                            console.log(res['code']);
+                            toastr.info('Запись восстановлена');
+                            history.pushState("delete","delete",`delete.php?id=${res['id']}`)
+                            $('#recordId').val(res['id']);
                             $('#button').data("deleted",0);
                             $('#button').text("Удалить");
+                        },
+                        error: function(data){
+                            console.log(data);
+                            console.log('error during execution');
+                            toastr.error('Ошибка во время выполнения');
                         }
-                    })
+                    });
                 }
                 
             })

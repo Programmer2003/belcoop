@@ -1,6 +1,7 @@
 <?php
 include "db.php";
 
+
 if (isset($_POST['id'])) {
     $id = $_POST['id'];
     $name = $_POST['name'];
@@ -8,10 +9,9 @@ if (isset($_POST['id'])) {
     $category = $_POST['category'];
     $query = "UPDATE `product` SET `name`='{$name}',`price`='{$price}',`category`='{$category}' WHERE `id`='{$id}'";
     if (mysqli_query($link, $query) === TRUE) {
-        echo 200;
+        $arr = array('code' => 200);
+        echo json_encode($arr);
     } else {
-        echo 502;
+        throw new Exception('Error');
     }
 }
-
-
